@@ -1,22 +1,12 @@
-import { StyleSheet, Text, View, FlatList } from "react-native";
-import React, { useState, useContext } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "react-native";
-import { Searchbar } from "react-native-paper";
-import { RestaurantInfoCard } from "../components/restaurant-info-card.component";
+import { FlatList } from "react-native";
+import React, { useContext } from "react";
 import styled from "styled-components/native";
+import { RestaurantInfoCard } from "../components/restaurant-info-card.component";
 import { Spacer } from "../components/spacer/spacer.component";
+import { SafeArea } from '../../../components/utility/safe-area.component'
 import { RestaurantsContext } from "../../../services/restaurants/restaurants.context";
-
-const SafeArea = styled.SafeAreaView`
-  flex: 1;
-  margintop: ${StatusBar.currentHright}px;
-  paddingTop: 23px;
-`
-
-const SearchContainer = styled.View`
-  padding: ${(props) => props.theme.space[3]};
-`
+import { ActivityIndicator, MD2Colors } from "react-native-paper";
+import { Search } from "../components/search.component";
 
 const RestaurantListContainer = styled.View`
   flex: 1;
@@ -29,41 +19,42 @@ const RestaurantList = styled(FlatList).attrs({
   },
 })``;
 
-export const RestaurantsScreen = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const onChangeSearch = (query) => setSearchQuery(query);
+const Loading = styled(ActivityIndicator)`
+  margin-left: -25px;
+`;
 
-  const restaurantContext = useContext(RestaurantsContext);
-  console.log(restaurantContext)
+const LoadingContainer = styled.View`
+  position: absolute;
+  top: 50%;
+  left: 45%;
+  z-index:999;
+`;
+
+export const RestaurantsScreen = () => {
+  const { isLoading, error, restaurants } = useContext(RestaurantsContext);
+  console.log(error);
 
   return (
     <SafeArea>
-      <SearchContainer >
-        <Searchbar
-          style={styles.bodySearch}
-          placeholder="Search"
-          onChangeText={onChangeSearch}
-          value={searchQuery}
-        />
-      </SearchContainer>
+      {isLoading && (
+        <LoadingContainer>
+          <ActivityIndicator size={50} animating={true} color={MD2Colors.purple900} />
+        </LoadingContainer>
+      )}
+      <Search />
       <RestaurantListContainer>
         <RestaurantList
-          data={restaurantContext.restaurants}
-          renderItem={() => (
-            <Spacer position="bottom" size="large">
-              <RestaurantInfoCard />
-            </Spacer>
-          )}
-          keyExtractor={(_,i) => i}
-          contentContainerStyle={{ padding: 16 }}
+          data={restaurants}
+          renderItem={({ item }) => {
+            return (
+              <Spacer position="bottom" size="large">
+                <RestaurantInfoCard restaurant={item} />
+              </Spacer>
+            );
+          }}
+          keyExtractor={(item) => item.name}
         />
       </RestaurantListContainer>
     </SafeArea>
   );
 };
-
-const styles = StyleSheet.create({
-  bodySearch: {
-    borderRadius: 100 / 2,
-  },
-});

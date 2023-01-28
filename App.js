@@ -10,6 +10,7 @@ import { Text } from 'react-native'
 import { SafeArea } from "./src/components/utility/safe-area.component";
 import { Ionicons } from "@expo/vector-icons";
 import { RestaurantsContextProvider } from "./src/services/restaurants/restaurants.context";
+import { LocationContextProvider } from "./src/services/location/location.context";
 import {
   useFonts as useOswald,
   Oswald_400Regular,
@@ -63,17 +64,19 @@ export default function App() {
   return (
     <>
       <ThemeProvider theme={theme}>
-        <RestaurantsContextProvider>
-          <NavigationContainer>
-            <Tab.Navigator
-              screenOptions={createScreen}
-            >
-              <Tab.Screen name="Restaurants" component={RestaurantsScreen} />
-              <Tab.Screen name="Map" component={Map} />
-              <Tab.Screen name="Settings" component={Settings} />
-            </Tab.Navigator>
-          </NavigationContainer>
-        </RestaurantsContextProvider>
+        <LocationContextProvider>
+          <RestaurantsContextProvider>
+            <NavigationContainer>
+              <Tab.Navigator
+                screenOptions={createScreen}
+              >
+                <Tab.Screen name="Restaurants" component={RestaurantsScreen} />
+                <Tab.Screen name="Map" component={Map} />
+                <Tab.Screen name="Settings" component={Settings} />
+              </Tab.Navigator>
+            </NavigationContainer>
+          </RestaurantsContextProvider>
+        </LocationContextProvider>
       </ThemeProvider>
       <ExpoStatusBar style='auto' />
     </>
