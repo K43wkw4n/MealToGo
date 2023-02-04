@@ -1,3 +1,4 @@
+import 'react-native-gesture-handler';
 import React from 'react';
 import { RestaurantsScreen } from './src/features/restaurants/screens/restaurants.screen';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
@@ -11,6 +12,7 @@ import { SafeArea } from "./src/components/utility/safe-area.component";
 import { Ionicons } from "@expo/vector-icons";
 import { RestaurantsContextProvider } from "./src/services/restaurants/restaurants.context";
 import { LocationContextProvider } from "./src/services/location/location.context";
+import { Navigation } from './src/infrastructure/navigation/index'
 import {
   useFonts as useOswald,
   Oswald_400Regular,
@@ -32,49 +34,12 @@ export default function App() {
     return null
   }
 
-  const Tab = createBottomTabNavigator();
-
-  const Settings = () => (
-    <SafeArea>
-      <Text>Settings</Text>
-    </SafeArea>
-  );
-  const Map = () => (
-    <SafeArea>
-      <Text>Map</Text>
-    </SafeArea>
-  );
-
-  const TAB_ICON = {
-    Restaurants: "md-restaurant",
-    Map: "md-map",
-    Settings: "md-settings",
-  };
-
-  const createScreen = ({ route }) => ({
-    headerShown: false,
-    tabBarIcon: ({ color, size }) => {
-      let iconName = TAB_ICON[route.name]
-      return <Ionicons name={iconName} size={size} color={color} />;
-    },
-    tabBarActiveTintColor: "tomato",
-    tabBarInactiveTintColor: "gray",
-  })
-
   return (
     <>
       <ThemeProvider theme={theme}>
         <LocationContextProvider>
           <RestaurantsContextProvider>
-            <NavigationContainer>
-              <Tab.Navigator
-                screenOptions={createScreen}
-              >
-                <Tab.Screen name="Restaurants" component={RestaurantsScreen} />
-                <Tab.Screen name="Map" component={Map} />
-                <Tab.Screen name="Settings" component={Settings} />
-              </Tab.Navigator>
-            </NavigationContainer>
+            <Navigation />
           </RestaurantsContextProvider>
         </LocationContextProvider>
       </ThemeProvider>
