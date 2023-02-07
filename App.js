@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { RestaurantsScreen } from './src/features/restaurants/screens/restaurants.screen';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import { ThemeProvider } from 'styled-components/native';
@@ -14,6 +14,7 @@ import { RestaurantsContextProvider } from "./src/services/restaurants/restauran
 import { LocationContextProvider } from "./src/services/location/location.context";
 import { Navigation } from './src/infrastructure/navigation/index'
 import { FavouritesContextProvider } from "./src/services/favourites/favourites.context";
+import { firebase } from "./firebaseConfig";
 
 import {
   useFonts as useOswald,
@@ -25,6 +26,18 @@ import {
 } from '@expo-google-fonts/lato';
 
 export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => {
+      firebase.auth.signInWithEmailAndPassword(
+        firebase.getAuth,
+        "Parzival@gmail.com",
+        "wedwatts3"
+      ).then((user) => { setIsAuthenticated(true) }).catch(() => { setIsAuthenticated(false) })
+    }, 2000)
+  }, [])
+
   let [OswaldLoaded] = useOswald({
     Oswald_400Regular,
   });
@@ -35,6 +48,8 @@ export default function App() {
   if (!OswaldLoaded || !LatoLoaded) {
     return null
   }
+
+  if (!isAuthenticated) return null;
 
   return (
     <>
